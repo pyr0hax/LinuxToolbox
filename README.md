@@ -44,13 +44,11 @@ You can also modify the target_address to work with application as well as examp
 
 Please make sure to modify the email address in the script to whom it should notify when certificate is expiring.
 
-# Pyroname
+# Pyroname: a Rename tool to overwrite, but commenting out the old info when catting info from one file to the other.
 
 SED rename when catting to an existing file it comments out the old code so that there can be no confusion
 
-# NetplanApply
-
-Netplan configuration script for Ubuntu.
+# NetplanApply: a simple shell script to automate the IP config changes to a NETPLAN config file.
 
 ## Usage
 
