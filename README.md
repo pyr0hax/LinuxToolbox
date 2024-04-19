@@ -17,7 +17,7 @@ Note that you will need to enter your Sudo password if you are not root.
 
 Stay secure and enjoy using Pyroscan for all your port scanning needs!
 
-NginxProxySetup is a tool that can assist you in building basic configurations for reverse proxy and securing your site with Certbot.
+# NginxProxySetup: NginxProxySetup is a tool that can assist you in building basic configurations for reverse proxy and securing your site with Certbot.
 
 Please note that you need to have port 80 and 443 open to your NGINX server for this tool to work.
 
