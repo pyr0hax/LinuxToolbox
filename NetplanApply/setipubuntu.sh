@@ -1,17 +1,13 @@
 #!/bin/bash
 
-# Define indentation levels
 level1=$(printf "    ") # 4 spaces
 level2=$(printf "        ") # 8 spaces
 level3=$(printf "            ") # 12 spaces
 
-# Prompt user for network configuration
 read -p "Do you want to use DHCP or Static IP? (dhcp/static): " ip_type
 
-# Initialize configuration variable
 config=""
 
-# Set configuration based on user input
 if [[ "$ip_type" == "dhcp" ]]; then
     config="${level3}dhcp4: true"
 elif [[ "$ip_type" == "static" ]]; then
@@ -35,7 +31,6 @@ else
     exit 1
 fi
 
-# Display available netplan configurations and prompt for selection
 echo "Available netplan configurations:"
 ls /etc/netplan/*.yaml 2>/dev/null || echo "No netplan configurations found."
 
@@ -49,10 +44,7 @@ else
     exit 1
 fi
 
-# Update the selected netplan configuration with proper indentation
 cat <<EOF | sudo tee "$config_path"
-# This file describes the network interfaces available on your system
-# For more information, see netplan(5).
 network:
   version: 2
   ethernets:
@@ -60,5 +52,4 @@ network:
 $config
 EOF
 
-# Apply the new netplan configuration
 sudo netplan apply
