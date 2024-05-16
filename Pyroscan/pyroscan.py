@@ -1,3 +1,6 @@
+#Author: Jaco van Zyl
+#Email: jvanzyl5@outlook.com
+
 #!/usr/bin/python
 
 from socket import *

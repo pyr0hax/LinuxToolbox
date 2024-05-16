@@ -1,3 +1,6 @@
+#Author: Jaco van Zyl
+#Email: jvanzyl5@outlook.com
+
 #include <stdio.h>
 #include <stdlib.h>
 

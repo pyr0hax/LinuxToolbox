@@ -1,3 +1,5 @@
+#Author: Jaco van Zyl
+#Email: jvanzyl5@outlook.com
 #!/bin/bash
 
 level1=$(printf "    ") # 4 spaces
