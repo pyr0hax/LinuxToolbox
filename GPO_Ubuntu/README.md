@@ -5,10 +5,17 @@
 ## This is to give a GPO-Like experience to your Ubuntu Desktop Environment. a Lot more features will be added.
 
 1. Edit your inventory file to reflect your subnet of your Ubuntu Desktops.
-2. Set the Desktop Background location on your Ansible server that you want to use on all Ubuntu Desktops.
-3. After Onedrive is installed, you need to run onedrive --synchronize on each machine to login and specify the Return URI (For Companies using Office package)
-4. Change the Theme to whatever you want to that is available standard on the Ubuntu Desktop.
-5. Added OnlyOffice as default Office Suite as the look and feel is very similar to the Microsoft Office suite.
+2. Add the root password to the Inventory file as well.
+3. Set the Desktop Background location on your Ansible server that you want to use on all Ubuntu Desktops.
+4. After Onedrive is installed, you need to run onedrive --synchronize on each machine to login and specify the Return URI (For Companies using Office package)
+5. Change the Theme to whatever you want to that is available standard on the Ubuntu Desktop.
+6. Added OnlyOffice as default Office Suite as the look and feel is very similar to the Microsoft Office suite.
+
+7. You can run the playbook with the following command from your Ansible Server:
+
+    ```bash
+    ansible-playbook -i inventory gpo_playbook.yaml
+    ```
 
 ## What is still to come?
 

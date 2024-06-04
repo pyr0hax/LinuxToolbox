@@ -1,2 +1,4 @@
 [ubuntu_desktops]
-10.208.72.X   # Replace X with the appropriate host addresses within the subnet
+{% for ip in range(1, 255) %}
+10.208.72.{% raw %}{{ ip }}{% endraw %} ansible_host=10.208.72.{% raw %}{{ ip }}{% endraw %} ansible_become_password=mypassword
+{% endfor %}
