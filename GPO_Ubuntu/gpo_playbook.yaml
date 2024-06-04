@@ -1,4 +1,3 @@
----
 - name: Manage Ubuntu Desktop Environment
   hosts: ubuntu_desktops
   become: yes
@@ -6,86 +5,87 @@
 
   tasks:
     - name: Block social media by editing /etc/hosts
-      block:
-        - url: 'https://www.facebook.com'
-        - url: 'https://www.twitter.com'
-        - url: 'https://www.instagram.com'
-        - url: 'https://www.tiktok.com'
-        - url: 'https://www.snapchat.com'
-        - url: 'https://www.youtube.com'
-      hosts:
-        /etc/hosts:
-          - '127.0.0.1 facebook.com'
-          - '127.0.0.1 www.facebook.com'
-          - '127.0.0.1 twitter.com'
-          - '127.0.0.1 www.twitter.com'
-          - '127.0.0.1 instagram.com'
-          - '127.0.0.1 www.instagram.com'
-          - '127.0.0.1 tiktok.com'
-          - '127.0.0.1 www.tiktok.com'
-          - '127.0.0.1 snapchat.com'
-          - '127.0.0.1 www.snapchat.com'
-          - '127.0.0.1 www.youtube.com'
-          - '127.0.0.1 youtube.com'
+      blockinfile:
+        path: /etc/hosts
+        block: |
+          127.0.0.1 facebook.com
+          127.0.0.1 www.facebook.com
+          127.0.0.1 twitter.com
+          127.0.0.1 www.twitter.com
+          127.0.0.1 instagram.com
+          127.0.0.1 www.instagram.com
+          127.0.0.1 tiktok.com
+          127.0.0.1 www.tiktok.com
+          127.0.0.1 snapchat.com
+          127.0.0.1 www.snapchat.com
+          127.0.0.1 www.youtube.com
+          127.0.0.1 youtube.com
 
     - name: Get user information from /etc/passwd
-      shell: grep "1001:" /etc/passwd | cut -d: -f1
-      register: user_name
+      command: getent passwd
+      register: passwd_output
 
-    - name: Become the user
-      become_user: "{{ user_name.stdout }}"
+    - name: Extract users with home directories
+      set_fact:
+        user_list: "{{ passwd_output.stdout_lines | map('split', ':') | selectattr(5, 'match', '^/home') | map('first') | list }}"
 
-    - name: Update apt cache
-      apt:
-        update_cache: yes
+    - name: Display found users
+      debug:
+        msg: "{{ user_list }}"
 
-    - name: Upgrade all packages
-      apt:
-        upgrade: dist
+    - name: Perform tasks as each user
+      become: yes
+      become_user: "{{ item }}"
+      loop: "{{ user_list }}"
+      tasks:
+        - name: Update apt cache
+          apt:
+            update_cache: yes
 
-    - name: Install Firefox and Google Chrome
-      apt:
-        name: "{{ item }}"
-        state: present
-      with_items:
-        - firefox
-        - google-chrome-stable
-        - onlyoffice
+        - name: Upgrade all packages
+          apt:
+            upgrade: dist
 
-    - name: Install OneDrive
-      apt:
-        name: onedrive
-        state: present
+        - name: Install Firefox and Google Chrome
+          apt:
+            name: "{{ item }}"
+            state: present
+          with_items:
+            - firefox
+            - google-chrome-stable
+            - onlyoffice
 
-    - name: Run OneDrive as user service
-      shell: systemctl enable --user onedrive
-      become_user: "{{ user_name.stdout }}"
+        - name: Install OneDrive
+          apt:
+            name: onedrive
+            state: present
 
-    - name: Copy background image
-      copy:
-        src: /path/to/your/background.png
-        dest: /home/{{ user_name.stdout }}/Pictures/background.png
-        remote_src: yes
-      notify: Change background
+        - name: Run OneDrive as user service
+          shell: systemctl enable --user onedrive
 
-    - name: Install dark GTK theme
-      apt:
-        name: gnome-themes-extra
-        state: present
+        - name: Copy background image
+          copy:
+            src: /path/to/your/background.png
+            dest: /home/{{ item }}/Pictures/background.png
+            remote_src: yes
+          notify: Change background
 
-    - name: Copy OnlyOffice deb file
-      copy:
-        src: onlyoffice.deb
-        dest: /home/{{ user_name.stdout }}/
+        - name: Install dark GTK theme
+          apt:
+            name: gnome-themes-extra
+            state: present
 
-    - name: Install OnlyOffice
-      shell: sudo apt install onlyoffice.deb && rm /home/{{ user_name.stdout }}/onlyoffice.deb
+        - name: Copy OnlyOffice deb file
+          copy:
+            src: onlyoffice.deb
+            dest: /home/{{ item }}/
+
+        - name: Install OnlyOffice
+          shell: sudo apt install -y /home/{{ item }}/onlyoffice.deb && rm /home/{{ item }}/onlyoffice.deb
 
   handlers:
     - name: Change background
-      shell: gsettings set org.gnome.desktop.background picture-uri file:///home/{{ user_name.stdout }}/Pictures/background.png
-      become_user: "{{ user_name.stdout }}"
+      shell: gsettings set org.gnome.desktop.background picture-uri file:///home/{{ ansible_user }}/Pictures/background.png
 
     - name: Set dark GTK theme
       shell: gsettings set org.gnome.desktop.interface gtk-theme 'Adwaita-dark'
-      become_user: "{{ user_name.stdout }}"
