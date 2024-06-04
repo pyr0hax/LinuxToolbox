@@ -1,6 +1,6 @@
 # Playbook instructions.
 
-## This playbook will root ssh into your Ubuntu Desktop machines, Go to /etc/passwd, look at user 1001 and then become that user to execute all the tasks. So preferred using Desktop Environments that has only one additional user. 
+## This playbook will root ssh into your Ubuntu Desktop machines, and Fetch all the Users on the system and execute the playbook for each user
 
 ## This is to give a GPO-Like experience to your Ubuntu Desktop Environment. a Lot more features will be added.
 
