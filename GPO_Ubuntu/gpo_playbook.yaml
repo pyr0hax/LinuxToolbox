@@ -1,6 +1,6 @@
 ---
 - name: Manage Ubuntu Desktop Environment
-  hosts: your_ubuntu_desktop_hosts
+  hosts: ubuntu_desktops
   become: yes
   tasks:
     - name: Update apt cache
@@ -31,7 +31,16 @@
         remote_src: yes
       notify: Change background
 
+    - name: Install dark GTK theme
+      apt:
+        name: gnome-themes-extra
+        state: present
+
   handlers:
     - name: Change background
       shell: gsettings set org.gnome.desktop.background picture-uri file:///home/{{ ansible_user }}/Pictures/background.png
+      become_user: "{{ ansible_user }}"
+
+    - name: Set dark GTK theme
+      shell: gsettings set org.gnome.desktop.interface gtk-theme 'Adwaita-dark'
       become_user: "{{ ansible_user }}"
