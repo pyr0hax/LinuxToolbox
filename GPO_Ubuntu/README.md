@@ -10,8 +10,9 @@
 4. After Onedrive is installed, you need to run onedrive --synchronize on each machine to login and specify the Return URI (For Companies using Office package)
 5. Change the Theme to whatever you want to that is available standard on the Ubuntu Desktop.
 6. Added OnlyOffice as default Office Suite as the look and feel is very similar to the Microsoft Office suite.
+7. Added a block to popular social media by pointing the DNS entries to 127.0.0.1.
 
-7. You can run the playbook with the following command from your Ansible Server:
+8. You can run the playbook with the following command from your Ansible Server:
 
     ```bash
     ansible-playbook -i inventory gpo_playbook.yaml

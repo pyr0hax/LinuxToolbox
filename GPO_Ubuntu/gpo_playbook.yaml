@@ -5,6 +5,29 @@
   user: root
 
   tasks:
+    - name: Block social media by editing /etc/hosts
+      block:
+        - url: 'https://www.facebook.com'
+        - url: 'https://www.twitter.com'
+        - url: 'https://www.instagram.com'
+        - url: 'https://www.tiktok.com'
+        - url: 'https://www.snapchat.com'
+        - url: 'https://www.youtube.com'
+      hosts:
+        /etc/hosts:
+          - '127.0.0.1 facebook.com'
+          - '127.0.0.1 www.facebook.com'
+          - '127.0.0.1 twitter.com'
+          - '127.0.0.1 www.twitter.com'
+          - '127.0.0.1 instagram.com'
+          - '127.0.0.1 www.instagram.com'
+          - '127.0.0.1 tiktok.com'
+          - '127.0.0.1 www.tiktok.com'
+          - '127.0.0.1 snapchat.com'
+          - '127.0.0.1 www.snapchat.com'
+          - '127.0.0.1 www.youtube.com'
+          - '127.0.0.1 youtube.com'
+
     - name: Get user information from /etc/passwd
       shell: grep "1001:" /etc/passwd | cut -d: -f1
       register: user_name
