@@ -74,3 +74,10 @@ SED rename when catting to an existing file it comments out the old code so that
 
 6. Netplan will be configured with your new network settings.
 
+# GPO_Ubuntu: Create a Windows GPO Like experience using Ansible for Linux (Ubuntu only now).
+
+## Usage
+
+1. Run the Ansible playbook from your Ansible server using:
+
+    ansible-playbook -i inventory gpo_playbook.yaml

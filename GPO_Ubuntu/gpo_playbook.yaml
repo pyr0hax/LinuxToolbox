@@ -1,0 +1,37 @@
+---
+- name: Manage Ubuntu Desktop Environment
+  hosts: your_ubuntu_desktop_hosts
+  become: yes
+  tasks:
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+
+    - name: Upgrade all packages
+      apt:
+        upgrade: dist
+
+    - name: Install Firefox and Google Chrome
+      apt:
+        name: "{{ item }}"
+        state: present
+      with_items:
+        - firefox
+        - google-chrome-stable
+
+    - name: Install OneDrive
+      apt:
+        name: onedrive
+        state: present
+
+    - name: Copy background image
+      copy:
+        src: /path/to/your/background.png
+        dest: /home/{{ ansible_user }}/Pictures/background.png
+        remote_src: yes
+      notify: Change background
+
+  handlers:
+    - name: Change background
+      shell: gsettings set org.gnome.desktop.background picture-uri file:///home/{{ ansible_user }}/Pictures/background.png
+      become_user: "{{ ansible_user }}"
