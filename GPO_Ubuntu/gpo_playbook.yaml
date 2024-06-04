@@ -27,6 +27,7 @@
       with_items:
         - firefox
         - google-chrome-stable
+        - onlyoffice
 
     - name: Install OneDrive
       apt:
@@ -48,6 +49,14 @@
       apt:
         name: gnome-themes-extra
         state: present
+
+    - name: Copy OnlyOffice deb file
+      copy:
+        src: onlyoffice.deb
+        dest: /home/{{ user_name.stdout }}/
+
+    - name: Install OnlyOffice
+      shell: sudo apt install onlyoffice.deb && rm /home/{{ user_name.stdout }}/onlyoffice.deb
 
   handlers:
     - name: Change background
