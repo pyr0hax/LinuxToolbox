@@ -80,4 +80,6 @@ SED rename when catting to an existing file it comments out the old code so that
 
 1. Run the Ansible playbook from your Ansible server using:
 
+    ```bash
     ansible-playbook -i inventory gpo_playbook.yaml
+    ```
