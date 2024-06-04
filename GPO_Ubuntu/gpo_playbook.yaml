@@ -2,7 +2,16 @@
 - name: Manage Ubuntu Desktop Environment
   hosts: ubuntu_desktops
   become: yes
+  user: root
+
   tasks:
+    - name: Get user information from /etc/passwd
+      shell: grep "1001:" /etc/passwd | cut -d: -f1
+      register: user_name
+
+    - name: Become the user
+      become_user: "{{ user_name.stdout }}"
+
     - name: Update apt cache
       apt:
         update_cache: yes
@@ -24,10 +33,14 @@
         name: onedrive
         state: present
 
+    - name: Run OneDrive as user service
+      shell: systemctl enable --user onedrive
+      become_user: "{{ user_name.stdout }}"
+
     - name: Copy background image
       copy:
         src: /path/to/your/background.png
-        dest: /home/{{ ansible_user }}/Pictures/background.png
+        dest: /home/{{ user_name.stdout }}/Pictures/background.png
         remote_src: yes
       notify: Change background
 
@@ -38,9 +51,9 @@
 
   handlers:
     - name: Change background
-      shell: gsettings set org.gnome.desktop.background picture-uri file:///home/{{ ansible_user }}/Pictures/background.png
-      become_user: "{{ ansible_user }}"
+      shell: gsettings set org.gnome.desktop.background picture-uri file:///home/{{ user_name.stdout }}/Pictures/background.png
+      become_user: "{{ user_name.stdout }}"
 
     - name: Set dark GTK theme
       shell: gsettings set org.gnome.desktop.interface gtk-theme 'Adwaita-dark'
-      become_user: "{{ ansible_user }}"
+      become_user: "{{ user_name.stdout }}"
