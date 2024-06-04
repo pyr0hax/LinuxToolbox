@@ -25,6 +25,18 @@
       command: getent passwd
       register: passwd_output
 
+    - name: Set default session manager to Xorg
+      command: update-alternatives --set x-session-manager /usr/bin/startx
+      when: 
+        - ansible_distribution == "Ubuntu"
+        - ansible_distribution_version in ["22.04", "24.04"]
+
+    - name: Set default display manager to gdm3
+      command: update-alternatives --set gdm3 /usr/bin/gdm3
+      when: 
+        - ansible_distribution == "Ubuntu"
+        - ansible_distribution_version in ["22.04", "24.04"]
+
     - name: Extract users with home directories
       set_fact:
         user_list: "{{ passwd_output.stdout_lines | map('split', ':') | selectattr(5, 'match', '^/home') | map('first') | list }}"
@@ -33,34 +45,28 @@
       debug:
         msg: "{{ user_list }}"
 
-    - name: Perform tasks as each user
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+
+    - name: Upgrade all packages
+      apt:
+        upgrade: dist
+
+    - name: Install required packages
+      apt:
+        name:
+          - google-chrome-stable
+          - onedrive
+          - gnome-themes-extra
+        state: present
+
+    - name: Perform user-specific tasks
       become: yes
       become_user: "{{ item }}"
       loop: "{{ user_list }}"
       tasks:
-        - name: Update apt cache
-          apt:
-            update_cache: yes
-
-        - name: Upgrade all packages
-          apt:
-            upgrade: dist
-
-        - name: Install Firefox and Google Chrome
-          apt:
-            name: "{{ item }}"
-            state: present
-          with_items:
-            - firefox
-            - google-chrome-stable
-            - onlyoffice
-
-        - name: Install OneDrive
-          apt:
-            name: onedrive
-            state: present
-
-        - name: Run OneDrive as user service
+        - name: Enable OneDrive as user service
           shell: systemctl enable --user onedrive
 
         - name: Copy background image
@@ -69,11 +75,6 @@
             dest: /home/{{ item }}/Pictures/background.png
             remote_src: yes
           notify: Change background
-
-        - name: Install dark GTK theme
-          apt:
-            name: gnome-themes-extra
-            state: present
 
         - name: Copy OnlyOffice deb file
           copy:
